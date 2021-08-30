@@ -218,9 +218,13 @@ def main():
         elif sys.argv[2] == "LS":
             routerClass = LSrouter
     net = Network(netCfgFilepath, routerClass, visualize=True)
+    print(1)
     root = Tk()
+    print(2)
     root.wm_title("Network Visualization")
+    print(3)
     app = App(root, net, visualizeParams)
+    print(4)
     root.mainloop()
 
 

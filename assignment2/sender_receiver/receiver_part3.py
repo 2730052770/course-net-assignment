@@ -58,13 +58,13 @@ def decode_i(s):
 def decode(s):
     return PacketHeader(type = decode_i(s[0:4]), seq_num = decode_i(s[4:8]), length = decode_i(s[8:12]), checksum = decode_i(s[12:16])) / s[16:]
 
-def mysend(s, stk, addr):
+def mysend(s, skt, addr):
     while(random.random() < K):
         pos = int(random.random() * len(s))
         b = int(random.random() * 8)
         c = chr(ord(s[pos]) ^ (((ord(s[pos])>>b)&1)<<b))
         s = s[:pos] + c + s[pos+1:]
-    stk.sendto(s, addr)
+    skt.sendto(s, addr)
 
 def myprint(s):
     sys.stderr.write(s + '\n')
@@ -81,8 +81,6 @@ def receiver(receiver_port, window_size):
         try:
             s, address = skt.recvfrom(2048)
         except:
-            if(l != 0):
-                send_ACK(skt, address, l)
             continue
         if(not reliable_str(s)):
             myprint("receiver: receive a broken pkt")
@@ -90,9 +88,15 @@ def receiver(receiver_port, window_size):
         pkt = decode(s)
         pos = pkt.seq_num
         myprint("receiver: receive a good pkt {}".format(pos))
-        if(pos >= r or lst[pos] != None):
-            send_ACK(skt, address, l)
+        if(pos >= r):
+            myprint("receiver: pkt {} 's order is too big".format(pos))
             continue
+
+        if(pos == end-1):
+            myprint("receiver: receive closed signal")
+            break
+
+        send_ACK(skt, address, pos)
         lst[pos] = pkt
 
         while(lst[l] != None):
@@ -101,8 +105,6 @@ def receiver(receiver_port, window_size):
             l = l + 1
             r = r + 1
             lst.append(None)
-        if(l != end):
-            send_ACK(skt, address, l)
     #send_ACK(skt, address, end + 1)
     for p in lst[1:end-2]:
         sys.stdout.write(p.load)

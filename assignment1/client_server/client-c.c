@@ -45,15 +45,22 @@ int client(char *server_ip, char *server_port) {
   }
 
   // connect to server
-  if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+  while (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
   {
     perror("connect failed");
     exit(EXIT_FAILURE);
   }
 
   // send data
-  char buffer[SEND_BUFFER_SIZE] = "Hello, world!\n";
-  send(sock, buffer, strlen(buffer), 0);
+  char buffer[SEND_BUFFER_SIZE];
+  int sz,i;
+  while((sz=fread(buffer,1,SEND_BUFFER_SIZE,stdin))){
+      i=0;
+      while(i!=sz)
+        i+=send(sock, buffer+i, sz-i, 0);
+  } 
+  
+  
 
   // close socket
   close(sock);

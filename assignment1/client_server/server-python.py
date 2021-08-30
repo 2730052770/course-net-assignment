@@ -15,11 +15,18 @@ def server(server_port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind(('127.0.0.1', server_port))
     s.listen(QUEUE_LENGTH)
-    conn, addr = s.accept()
-    data = conn.recv(RECV_BUFFER_SIZE)
-    sys.stdout.write(data)
-    sys.stdout.flush()
-    conn.close()
+    while(1):
+        conn, addr = s.accept()
+
+        while(1):
+            data = conn.recv(RECV_BUFFER_SIZE)
+            if(not data):
+                break
+            sys.stdout.write(data)
+
+        sys.stdout.flush()
+        conn.close()
+
 
 def main():
     """Parse command-line argument and call server function """

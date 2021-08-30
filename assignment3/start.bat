@@ -1,0 +1,1 @@
+cmd /k "activate py27 & python visualize_network.py 01_small_net.json"

@@ -1,0 +1,58 @@
+================================================================
+Testing C client against C server (1/4)                         
+================================================================
+
+One or both programs missing. Skipping. 
+
+================================================================
+Testing Python client against Python server (2/4)               
+================================================================
+
+6. TEST SHORT MESSAGE
+
+SUCCESS: Message received matches message sent!
+________________________________________
+
+7. TEST RANDOM ALPHANUMERIC MESSAGE
+
+FAILURE: Message received doesn't match message sent.
+________________________________________
+
+8. TEST RANDOM BINARY MESSAGE
+
+FAILURE: Message received doesn't match message sent.
+________________________________________
+
+9. TEST SERVER INFINITE LOOP (multiple sequential clients to same server)
+
+FAILURE: Message received doesn't match message sent.
+Differences:
+1,3c1,3
+< Line 1
+< Line 2
+< Line 3
+---
+> Hello, world!
+> Hello, world!
+> Hello, world!
+________________________________________
+
+10. TEST SERVER QUEUE (overlapping clients to same server)
+
+FAILURE: Message received doesn't match message sent.
+
+================================================================
+Testing C client against Python server (3/4)                    
+================================================================
+
+One or both programs missing. Skipping. 
+
+================================================================
+Testing Python client against C server (4/4)                    
+================================================================
+
+One or both programs missing. Skipping. 
+
+================================================================
+
+TESTS PASSED: 1/20

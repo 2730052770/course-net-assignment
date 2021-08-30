@@ -58,25 +58,32 @@ int server(char *server_port) {
     perror("listen failed");
     exit(EXIT_FAILURE);
   }
-
+  char buffer[RECV_BUFFER_SIZE];
   // accept a connection
   int sock;
   int addrlen = sizeof(address);
-  if ((sock = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0)
-  {
-    perror("accept failed");
-    exit(EXIT_FAILURE);
+  
+  while(1) {
+      if ((sock = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0)
+      {
+        //perror("accept failed");
+        //exit(EXIT_FAILURE);
+        continue;
+      }
+      // receive message
+      
+        int sum=0;
+      int recv_bytes;
+      while((recv_bytes = recv(sock, buffer, RECV_BUFFER_SIZE, 0))>0) {
+          fwrite(buffer, recv_bytes, 1, stdout);
+          sum+=recv_bytes;
+      }
+      //fprintf(stderr,"%d\n",sum);
+      fflush(stdout);
+    
+      // close socket
+      close(sock);
   }
-
-  // receive message
-  char buffer[RECV_BUFFER_SIZE];
-  int recv_bytes = recv(sock, buffer, RECV_BUFFER_SIZE, 0);
-  fwrite(buffer, recv_bytes, 1, stdout);
-  fflush(stdout);
-
-  // close socket
-  close(sock);
-
   return 0;
 }
 

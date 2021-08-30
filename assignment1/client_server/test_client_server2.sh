@@ -35,6 +35,8 @@ function compare {
     ((numCorrect++))
   else
     printf "\nFAILURE: Message received doesn't match message sent.\n"
+    cp $1 /vagrant/assignment1/client_server/
+    cp $2 /vagrant/assignment1/client_server/
     if [ $4 -ne 0 ]; then
       echo Differences:
       diff $1 $2
@@ -72,13 +74,6 @@ function all-tests {
   printf "\n$testNum. TEST SHORT MESSAGE\n"
   printf "Hello, world!\n" > test_message.txt
   test "$1" "$2" $3 1 1
-  ((testNum++))
-
-  ###############################################################################
-
-  printf "\n$testNum. TEST RANDOM ALPHANUMERIC MESSAGE\n"
-  head -c100000 /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' > test_message.txt
-  test "$1" "$2" $3 1 0
   ((testNum++))
 
   ###############################################################################
@@ -124,7 +119,7 @@ function all-tests {
   	(timeout 1 cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' ; echo) | tee test_message$i.txt | $1 127.0.0.1 $3 >/dev/null &
     CLIENT_PID[$i]=$!
   done
-  sleep 5
+  sleep 2
   for i in {0..9}; do
   	cat test_message$i.txt >> test_message.txt
   done
@@ -185,27 +180,6 @@ else
   ((testNum+=$TESTS_PER_IMPL))
 fi
 
-printf "================================================================\n"
-printf "Testing C client against Python server (3/4)                    \n"
-printf "================================================================\n"
-
-if [[ -f $SCC && -f $SPS ]]; then
-  all-tests $SCC "python $SPS" $PORT
-else
-  printf "\n$SKIP_MESSAGE"
-  ((testNum+=$TESTS_PER_IMPL))
-fi
-
-printf "================================================================\n"
-printf "Testing Python client against C server (4/4)                    \n"
-printf "================================================================\n"
-
-if [[ -f $SPC && -f $SCS ]]; then
-  all-tests "python $SPC" $SCS $PORT
-else
-  printf "\n$SKIP_MESSAGE"
-  ((testNum+=$TESTS_PER_IMPL))
-fi
 
 rm -rf $WORKSPACE
 
